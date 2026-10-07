@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fabians Bonus-Time Challenge</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131a2d;
+      --panel-2: #18223b;
+      --text: #f3f6ff;
+      --muted: #9da9c4;
+      --accent: #7cff6b;
+      --accent-2: #6bdcff;
+      --warn: #ffd166;
+      --danger: #ff6b7a;
+      --border: rgba(255,255,255,.10);
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(107,220,255,.16), transparent 30%),
+        radial-gradient(circle at top right, rgba(124,255,107,.12), transparent 28%),
+        linear-gradient(180deg, #09101f 0%, #0e1426 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: min(1100px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 34px 0 60px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(24,34,59,.94), rgba(16,24,43,.96));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-main { padding: 30px; }
+    .hero-side { padding: 26px; display:flex; flex-direction:column; justify-content:center; }
+
+    .eyebrow {
+      color: var(--accent-2);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0 12px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: .98;
+      letter-spacing: -.04em;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.6;
+      max-width: 760px;
+      margin: 0;
+    }
+
+    .time-big {
+      font-size: 44px;
+      font-weight: 900;
+      margin: 2px 0 4px;
+    }
+
+    .muted { color: var(--muted); }
+
+    .progress-shell {
+      height: 14px;
+      background: rgba(255,255,255,.07);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      transition: width .35s ease;
+    }
+
+    .levels {
+      display: grid;
+      gap: 18px;
+    }
+
+    .level {
+      padding: 24px;
+    }
+
+    .level-head {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .level-title {
+      margin: 2px 0 0;
+      font-size: 24px;
+    }
+
+    .reward {
+      color: var(--warn);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .question {
+      padding: 18px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-top: 12px;
+    }
+
+    .question h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .question p {
+      margin: 0 0 12px;
+      line-height: 1.55;
+      color: #d9e0f0;
+    }
+
+    .formula {
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: rgba(107,220,255,.10);
+      color: var(--accent-2);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.14);
+      background: #0c1427;
+      color: var(--text);
+      padding: 13px 14px;
+      border-radius: 12px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(107,220,255,.10);
+    }
+
+    .actions {
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .12s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      color: #07111f;
+    }
+
+    .secondary {
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .result {
+      display:none;
+      padding: 30px;
+      margin-top: 22px;
+      text-align:center;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .result.show { display:block; }
+
+    .result h2 {
+      font-size: clamp(30px, 5vw, 54px);
+      margin: 0 0 8px;
+    }
+
+    .minutes {
+      font-size: clamp(44px, 8vw, 82px);
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -.05em;
+      color: var(--accent);
+      margin: 12px 0;
+      text-shadow: 0 0 30px rgba(124,255,107,.18);
+    }
+
+    .rank {
+      display:inline-block;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .breakdown {
+      margin: 20px auto 0;
+      max-width: 660px;
+      display:grid;
+      gap:8px;
+      text-align:left;
+    }
+
+    .break-row {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+    }
+
+    .correct { color: var(--accent); font-weight:900; }
+    .wrong { color: var(--danger); font-weight:900; }
+
+    .answer-key {
+      display:none;
+      margin-top: 20px;
+      text-align:left;
+    }
+
+    .answer-key.show { display:block; }
+
+    .boss {
+      border: 1px solid rgba(255,209,102,.28);
+      background:
+        radial-gradient(circle at top right, rgba(255,209,102,.08), transparent 35%),
+        linear-gradient(180deg, rgba(44,35,23,.68), rgba(23,25,42,.94));
+    }
+
+    .tiny {
+      font-size: 13px;
+      color: var(--muted);
+      line-height:1.5;
+    }
+
+    .footer {
+      text-align:center;
+      color: var(--muted);
+      margin-top:24px;
+      font-size:13px;
+    }
+
+    @media (max-width: 780px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-main, .hero-side, .level, .result { padding: 20px; }
+      .level-head { flex-direction:column; }
+      .reward { white-space:normal; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="card hero-main">
+        <div class="eyebrow">Daily Quest · Bonus Time</div>
+        <h1>Fabians Bonus-Time Challenge</h1>
+        <p class="lead">
+          Heute gibt's Extra-Zeit nicht einfach so. 😈
+          Löse die Quest, sammle Punkte und unlocke zwischen
+          <strong>15 und 90 Minuten</strong> zusätzliche Gaming-Time.
+        </p>
+        <div class="progress-shell"><div class="progress" id="progress"></div></div>
+        <p class="tiny" id="progressText">0 von 10 normalen Aufgaben beantwortet</p>
+      </div>
+
+      <aside class="card hero-side">
+        <div class="eyebrow">Heute bereits</div>
+        <div class="time-big">4:00 h</div>
+        <div class="muted">Gaming-Time</div>
+        <div style="height:16px"></div>
+        <div class="eyebrow">Max Bonus</div>
+        <div class="time-big" style="color:var(--accent)">+1:30 h</div>
+        <div class="muted">bei Legendary Run</div>
+      </aside>
+    </section>
+
+    <section class="levels">
+
+      <div class="card level">
+        <div class="level-head">
+          <div>
+            <div class="eyebrow">Level 1</div>
+            <h2 class="level-title">🎮 Warm-up</h2>
+          </div>
+          <div class="reward">3 Punkte</div>
+        </div>
+
+        <div class="question">
+          <h3>1. Stack Master</h3>
+          <p>In Minecraft passen 64 Blöcke in einen Stack. Du hast 5 volle Stacks und noch 23 einzelne Blöcke. Wie viele Blöcke sind das insgesamt?</p>
+          <input data-answer="343" data-points="1" type="number" placeholder="Antwort eingeben">
+        </div>
+
+        <div class="question">
+          <h3>2. Fortnite Average</h3>
+          <p>Du hast in 4 Matches insgesamt 28 Eliminations. Wie viele Eliminations sind das durchschnittlich pro Match?</p>
+          <input data-answer="7" data-points="1" type="number" placeholder="Antwort eingeben">
+        </div>
+
+        <div class="question">
+          <h3>3. Schnell gerechnet</h3>
+          <p>Ein Match dauert 22 Minuten. Wie viele Minuten dauern 3 Matches?</p>
+          <input data-answer="66" data-points="1" type="number" placeholder="Antwort eingeben">
+        </div>
+      </div>
+
+      <div class="card level">
+        <div class="level-head">
+          <div>
+            <div class="eyebrow">Level 2</div>
+            <h2 class="level-title">⛏️ Minecraft Math</h2>
+          </div>
+          <div class="reward">3 Punkte</div>
+        </div>
+
+        <div class="question">
+          <h3>4. Mauerbau</h3>
+          <p>Eine Mauer ist 18 Blöcke breit und 7 Blöcke hoch. Wie viele Blöcke brauchst du insgesamt?</p>
+          <span class="formula">A = Breite · Höhe</span>
+          <input data-answer="126" data-points="1" type="number" placeholder="Antwort eingeben">
+        </div>
+
+        <div class="question">
+          <h3>5. Pickaxe Runs</h3>
+          <p>Deine Spitzhacke hält noch 156 Nutzungen. Ein kompletter Mining-Run verbraucht 12 Nutzungen. Wie viele vollständige Runs sind möglich?</p>
+          <input data-answer="13" data-points="1" type="number" placeholder="Antwort eingeben">
+        </div>
+
+        <div class="question">
+          <h3>6. Farmfläche</h3>
+          <p>Eine Farm ist 14 Blöcke lang und 9 Blöcke breit. Wie groß ist die Fläche?</p>
+          <span class="formula">A = a · b</span>
+          <input data-answer="126" data-points="1" type="number" placeholder="Antwort eingeben">
+        </div>
+      </div>
+
+      <div class="card level">
+        <div class="level-head">
+          <div>
+            <div class="eyebrow">Level 3</div>
+            <h2 class="level-title">📐 Klasse 8</h2>
+          </div>
+          <div class="reward">4 Punkte</div>
+        </div>
+
+        <div class="question">
+          <h3>7. Gleichung</h3>
+          <p>Löse nach <strong>x</strong> auf:</p>
+          <span class="formula">3x + 7 = 31</span>
+          <input data-answer="8" data-points="1" type="number" placeholder="x = ?">
+        </div>
+
+        <div class="question">
+          <h3>8. Formel umstellen</h3>
+          <p>Ein Rechteck hat eine Fläche von 72 m². Eine Seite ist 8 m lang. Wie lang ist die andere Seite?</p>
+          <span class="formula">A = a · b</span>
+          <input data-answer="9" data-points="1" type="number" placeholder="b = ?">
+        </div>
+
+        <div class="question">
+          <h3>9. Geschwindigkeit</h3>
+          <p>Ein Spieler legt 450 Meter in 30 Sekunden zurück. Wie viele Meter pro Sekunde sind das?</p>
+          <span class="formula">v = s / t</span>
+          <input data-answer="15" data-points="1" type="number" placeholder="m/s">
+        </div>
+
+        <div class="question">
+          <h3>10. Prozentrechnung</h3>
+          <p>Ein Skin kostet ursprünglich 1.800 V-Bucks. Er ist um 20 % reduziert. Wie viel kostet er jetzt?</p>
+          <span class="formula">Neuer Preis = Grundwert · 0,8</span>
+          <input data-answer="1440" data-points="1" type="number" placeholder="V-Bucks">
+        </div>
+      </div>
+
+      <div class="card level boss">
+        <div class="level-head">
+          <div>
+            <div class="eyebrow">Optionaler Boss Fight</div>
+            <h2 class="level-title">🔥 Bonusfrage</h2>
+          </div>
+          <div class="reward">+10 Minuten</div>
+        </div>
+
+        <div class="question">
+          <h3>Der Weg um die Farm</h3>
+          <p>
+            Eine rechteckige Farm ist innen <strong>18 × 12 Blöcke</strong> groß.
+            Außen herum wird ein Weg gebaut, der überall genau <strong>1 Block breit</strong> ist.
+            Wie viele Blöcke braucht der Weg?
+          </p>
+          <p class="tiny">Tipp: Rechne zuerst die Fläche inklusive Weg und ziehe danach die Farmfläche ab.</p>
+          <input id="bossAnswer" type="number" placeholder="Boss-Antwort">
+        </div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button class="primary" id="evaluateBtn">Quest abschließen & Bonus berechnen</button>
+      <button class="secondary" id="resetBtn">Neu starten</button>
+    </div>
+
+    <section class="card result" id="result">
+      <div class="eyebrow">Quest Complete</div>
+      <h2 id="rankTitle">Rang</h2>
+      <div class="rank" id="rankBadge">Bronze</div>
+      <div class="minutes" id="bonusMinutes">+15 MIN</div>
+      <p class="lead" style="margin-inline:auto" id="resultText"></p>
+
+      <div class="breakdown" id="breakdown"></div>
+
+      <div class="actions" style="justify-content:center">
+        <button class="secondary" id="toggleAnswers">Lösungen anzeigen</button>
+      </div>
+
+      <div class="answer-key" id="answerKey">
+        <div class="question"><strong>1.</strong> 5 × 64 + 23 = <strong>343</strong></div>
+        <div class="question"><strong>2.</strong> 28 ÷ 4 = <strong>7</strong></div>
+        <div class="question"><strong>3.</strong> 22 × 3 = <strong>66</strong></div>
+        <div class="question"><strong>4.</strong> 18 × 7 = <strong>126</strong></div>
+        <div class="question"><strong>5.</strong> 156 ÷ 12 = <strong>13</strong></div>
+        <div class="question"><strong>6.</strong> 14 × 9 = <strong>126</strong></div>
+        <div class="question"><strong>7.</strong> 3x + 7 = 31 → 3x = 24 → <strong>x = 8</strong></div>
+        <div class="question"><strong>8.</strong> 72 ÷ 8 = <strong>9 m</strong></div>
+        <div class="question"><strong>9.</strong> 450 ÷ 30 = <strong>15 m/s</strong></div>
+        <div class="question"><strong>10.</strong> 1800 × 0,8 = <strong>1440 V-Bucks</strong></div>
+        <div class="question"><strong>Boss:</strong> Außenmaß 20 × 14 = 280. Innen 18 × 12 = 216. Weg = 280 − 216 = <strong>64 Blöcke</strong></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Bonus-Time Challenge · Keine Server, keine Accounts, keine Tricks — nur Mathe, Gaming und Ruhm. 😎
+    </div>
+  </main>
+
+  <script>
+    const normalInputs = [...document.querySelectorAll('input[data-answer]')];
+    const bossAnswer = document.getElementById('bossAnswer');
+    const progress = document.getElementById('progress');
+    const progressText = document.getElementById('progressText');
+    const result = document.getElementById('result');
+    const breakdown = document.getElementById('breakdown');
+    const bonusMinutes = document.getElementById('bonusMinutes');
+    const rankTitle = document.getElementById('rankTitle');
+    const rankBadge = document.getElementById('rankBadge');
+    const resultText = document.getElementById('resultText');
+    const answerKey = document.getElementById('answerKey');
+
+    function updateProgress() {
+      const filled = normalInputs.filter(i => i.value.trim() !== '').length;
+      const pct = (filled / normalInputs.length) * 100;
+      progress.style.width = pct + '%';
+      progressText.textContent = `${filled} von ${normalInputs.length} normalen Aufgaben beantwortet`;
+    }
+
+    normalInputs.forEach(i => i.addEventListener('input', updateProgress));
+
+    function getRank(correct) {
+      if (correct <= 2) return {name:'Teilnehmer', mins:15, msg:'Quest angenommen und durchgezogen. Dafür gibt es den Basis-Bonus.'};
+      if (correct <= 4) return {name:'Bronze', mins:30, msg:'Solider Run. Da geht was.'};
+      if (correct <= 6) return {name:'Silber', mins:45, msg:'Starker Lauf. Die Bonuszeit wächst.'};
+      if (correct <= 8) return {name:'Gold', mins:60, msg:'Sehr stark. Das war kein Zufall mehr.'};
+      if (correct === 9) return {name:'Diamond', mins:75, msg:'Fast perfekter Run. Respekt.'};
+      return {name:'Legendary', mins:80, msg:'Alle normalen Aufgaben richtig. Boss entscheidet über die letzten Minuten.'};
+    }
+
+    document.getElementById('evaluateBtn').addEventListener('click', () => {
+      let correct = 0;
+      let html = '';
+
+      normalInputs.forEach((input, idx) => {
+        const expected = Number(input.dataset.answer);
+        const actual = Number(input.value);
+        const isCorrect = input.value.trim() !== '' && actual === expected;
+        if (isCorrect) correct++;
+
+        html += `
+          <div class="break-row">
+            <span>Aufgabe ${idx + 1}</span>
+            <span class="${isCorrect ? 'correct' : 'wrong'}">
+              ${isCorrect ? '✓ richtig' : '✗ falsch'}
+            </span>
+          </div>
+        `;
+      });
+
+      const rank = getRank(correct);
+      let mins = rank.mins;
+
+      const bossFilled = bossAnswer.value.trim() !== '';
+      const bossCorrect = bossFilled && Number(bossAnswer.value) === 64;
+      if (bossCorrect) mins += 10;
+
+      mins = Math.min(mins, 90);
+
+      html += `
+        <div class="break-row">
+          <span>Boss Fight</span>
+          <span class="${bossCorrect ? 'correct' : 'wrong'}">
+            ${bossCorrect ? '✓ +10 Minuten' : (bossFilled ? '✗ kein Bonus' : 'übersprungen')}
+          </span>
+        </div>
+      `;
+
+      rankTitle.textContent = `${rank.name} Run`;
+      rankBadge.textContent = `${correct}/10 richtig`;
+      bonusMinutes.textContent = `+${mins} MIN`;
+      resultText.textContent = rank.msg + (bossCorrect ? ' Boss gelegt. 🔥' : '');
+      breakdown.innerHTML = html;
+      result.classList.add('show');
+      answerKey.classList.remove('show');
+
+      result.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      normalInputs.forEach(i => i.value = '');
+      bossAnswer.value = '';
+      result.classList.remove('show');
+      answerKey.classList.remove('show');
+      updateProgress();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    document.getElementById('toggleAnswers').addEventListener('click', (e) => {
+      answerKey.classList.toggle('show');
+      e.target.textContent = answerKey.classList.contains('show')
+        ? 'Lösungen ausblenden'
+        : 'Lösungen anzeigen';
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>
